@@ -118,8 +118,10 @@ RTOS_errorID RTOS_Create_TaskStack(Task_ref* T_ref)
 {
 	RTOS_errorID error = NOError;
 
+
 	/*Task Frame
 	 * ======
+	 * this context is saved and restored on stack by CPU (when enter/exit interrupt mode):
 	 * XPSR
 	 * PC (Next Task Instruction which should be Run)
 	 * LR (return register which is saved in CPU while TASk1 running before TaskSwitching)
@@ -130,6 +132,7 @@ RTOS_errorID RTOS_Create_TaskStack(Task_ref* T_ref)
 	 * r1
 	 * r0
 	 *====
+	 *will push and pop manually the addition frame to save the other general purpose registers:
 	 *r5, r6 , r7 ,r8 ,r9, r10,r11 (Saved/Restore)Manual
 	 */
 
