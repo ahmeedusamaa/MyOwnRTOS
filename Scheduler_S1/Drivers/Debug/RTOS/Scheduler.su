@@ -1,0 +1,7 @@
+Scheduler.c:32:6:OS_SVC_services	24	static
+Scheduler.c:47:5:OS_SVC_Set	32	static,ignoring_inline_asm
+Scheduler.c:69:6:Idle_Task	4	static,ignoring_inline_asm
+Scheduler.c:77:14:RTOS_Create_MainStack	16	static
+Scheduler.c:90:14:RTOS_init	16	static
+Scheduler.c:117:14:RTOS_Create_TaskStack	24	static
+Scheduler.c:162:14:RTOS_CreateTask	24	static
