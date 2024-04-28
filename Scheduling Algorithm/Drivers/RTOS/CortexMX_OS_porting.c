@@ -58,7 +58,6 @@ void Hardware_init()
 	//Clock Tree
 	//RCC Default values makes CPU Clock & SysTick Timer clock = 8 MHZ
 	//Initializes the System Timer and its interrupt, and starts the System Tick Timer.
-	Start_Systick();
 
 
 	// decrease PendSV interrupt priority to be smaller than or equal SysTick Timer

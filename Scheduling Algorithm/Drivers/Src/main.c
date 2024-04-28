@@ -35,8 +35,8 @@
 
 #include "Scheduler.h"
 
-Task_ref T1, T2, T3;
-unsigned char T1_Led, T2_Led, T3_Led;
+Task_ref T1, T2, T3, T4;
+unsigned char T1_Led, T2_Led, T3_Led, T4_Led;
 void Task1()
 {
 	while(1)
@@ -61,33 +61,38 @@ void Task3()
 	}
 }
 
+
+
 int main(void)
 {
 	RTOS_errorID error;
 	Hardware_init();
 	RTOS_init();
 
-	T1.Stack_Size = 1024;
+	T1.Stack_Size = 512;
 	T1.P_TaskEntery = Task1;
 	T1.Priority = 3;
 	T1.Task_State = Suspended;
 	strcpy(T1.Task_name,"task1");
 
-	T2.Stack_Size = 1024;
+	T2.Stack_Size = 512;
 	T2.P_TaskEntery = Task2;
 	T2.Priority = 3;
 	T2.Task_State = Suspended;
 	strcpy(T2.Task_name,"task2");
 
-	T3.Stack_Size = 1024;
+	T3.Stack_Size = 512;
 	T3.P_TaskEntery = Task3;
 	T3.Priority = 3;
 	T3.Task_State = Suspended;
 	strcpy(T3.Task_name,"task3");
 
+
+
 	RTOS_CreateTask(&T1);
 	RTOS_CreateTask(&T2);
 	RTOS_CreateTask(&T3);
+
 
 	RTOS_ActivateTask(&T1);
 	RTOS_ActivateTask(&T2);

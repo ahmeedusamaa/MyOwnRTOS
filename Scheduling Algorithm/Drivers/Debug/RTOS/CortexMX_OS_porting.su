@@ -8,4 +8,4 @@ CortexMX_OS_porting.c:27:6:trigger_OS_PendSV	4	static
 CortexMX_OS_porting.c:34:6:SysTick_Handler	8	static
 CortexMX_OS_porting.c:45:27:SVC_Handler	0	static,ignoring_inline_asm
 CortexMX_OS_porting.c:54:6:Hardware_init	8	static
-CortexMX_OS_porting.c:68:6:Start_Systick	8	static
+CortexMX_OS_porting.c:67:6:Start_Systick	8	static
