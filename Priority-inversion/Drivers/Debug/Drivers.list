@@ -1322,11 +1322,11 @@ void Decide_whatNext()
  800087c:	695b      	ldr	r3, [r3, #20]
  800087e:	465a      	mov	r2, fp
  8000880:	601a      	str	r2, [r3, #0]
-			OS_Control.Current_Task = OS_Control.Next_Task ;
-			OS_Control.Next_Task = NULL ;
-		}
-*/
-
+	 * Without it, if the next task is NULL, the context switch operation risks
+	 * attempting to restore garbage values, including the Program Counter (PC)
+	 * That could lead to unpredictable behavior, , potentially jumping to an
+ 	 * unknown memory location.
+	*/
 	if (OS_Control.Next_Task != NULL){
  8000882:	4b3c      	ldr	r3, [pc, #240]	; (8000974 <PendSV_Handler+0x1c0>)
  8000884:	f8d3 31a4 	ldr.w	r3, [r3, #420]	; 0x1a4

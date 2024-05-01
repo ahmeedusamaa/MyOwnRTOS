@@ -319,6 +319,12 @@ __attribute ((naked)) PendSV_Handler()
 		}
 */
 
+	/*
+	 * Without it, if the next task is NULL, the context switch operation risks
+	 * attempting to restore garbage values, including the Program Counter (PC)
+	 * That could lead to unpredictable behavior, , potentially jumping to an
+ 	 * unknown memory location.
+	*/
 	if (OS_Control.Next_Task != NULL){
 		OS_Control.Current_Task = OS_Control.Next_Task ;
 		OS_Control.Next_Task = NULL ;
