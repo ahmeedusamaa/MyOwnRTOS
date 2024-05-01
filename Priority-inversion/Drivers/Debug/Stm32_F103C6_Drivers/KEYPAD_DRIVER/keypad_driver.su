@@ -1,0 +1,2 @@
+keypad_driver.c:17:6:Keypad_Init	8	static
+keypad_driver.c:66:6:Keypad_ScanKey	16	static
