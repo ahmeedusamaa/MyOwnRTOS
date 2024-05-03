@@ -39,10 +39,18 @@ typedef struct{
 
 }Task_ref;
 
+typedef struct{
+	unsigned char* Ppayload;
+	unsigned int PayloadSize;
+	Task_ref* CurrentTaskUser;
+	Task_ref* NexttTaskUser;
+}Mutex_ref;
+
 typedef enum {
 	NOError,
 	Ready_Queue_init_error,
-	Task_exceeded_StackSize
+	Task_exceeded_StackSize,
+	MutexMaxNumberOfUsers
 }RTOS_errorID;
 
 RTOS_errorID RTOS_init();
@@ -51,6 +59,7 @@ void RTOS_ActivateTask(Task_ref* T_ref);
 void RTOS_TerminalTask(Task_ref* T_ref);
 void Decide_whatNext();
 void RTOS_StartOS();
-
+void RTOS_TaskWait(unsigned int ticks, Task_ref* T_ref);
+void RTOS_Update_TaskWaitingTime();
 
 #endif /* INC_SCHEDULER_H_ */

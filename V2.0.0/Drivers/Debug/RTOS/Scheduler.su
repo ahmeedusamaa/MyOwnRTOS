@@ -1,0 +1,14 @@
+Scheduler.c:33:6:Idle_Task	4	static,ignoring_inline_asm
+Scheduler.c:42:14:RTOS_Create_MainStack	16	static
+Scheduler.c:55:14:RTOS_init	16	static
+Scheduler.c:82:14:RTOS_Create_TaskStack	24	static
+Scheduler.c:130:14:RTOS_CreateTask	24	static
+Scheduler.c:169:6:BubbleSort_SchedulerTable	24	static
+Scheduler.c:187:6:RTOS_Update_SchedulerTable	24	static
+Scheduler.c:233:6:Decide_whatNext	8	static
+Scheduler.c:258:23:PendSV_Handler	0	static,ignoring_inline_asm
+Scheduler.c:342:6:OS_SVC	24	static
+Scheduler.c:371:5:OS_SVC_Set	16	static,ignoring_inline_asm
+Scheduler.c:388:6:RTOS_ActivateTask	16	static
+Scheduler.c:394:6:RTOS_TerminalTask	16	static
+Scheduler.c:400:6:RTOS_StartOS	8	static,ignoring_inline_asm

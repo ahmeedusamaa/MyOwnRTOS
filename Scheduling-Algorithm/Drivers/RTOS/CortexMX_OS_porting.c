@@ -35,6 +35,8 @@ void SysTick_Handler()
 {
 	SysTickLed ^= 1;
 
+	RTOS_Update_TaskWaitingTime();
+
 	//Decide what next
 	Decide_whatNext();
 

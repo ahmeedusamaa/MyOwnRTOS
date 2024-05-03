@@ -35,68 +35,132 @@
 
 #include "Scheduler.h"
 
+
+
 Task_ref T1, T2, T3, T4;
 unsigned char T1_Led, T2_Led, T3_Led, T4_Led;
+Mutex_ref Mutex1;
+unsigned char payload[3]={0,1,2};
+
+
 void Task1()
 {
+	static int count=0;
 	while(1)
 	{
 		T1_Led ^=1;
+		count++;
+		if(count == 100)
+		{
+			RTOS_TakeMutex(&Mutex1, &T1);
+			RTOS_ActivateTask(&T2);
+		}
+		else if(count == 200)
+		{
+			count = 0;
+			RTOS_ReleaseMutex(&Mutex1);
+		}
 	}
 }
 
 void Task2()
 {
+	static int count=0;
 	while(1)
 	{
 		T2_Led ^=1;
+		count++;
+		if(count == 100)
+		{
+			RTOS_ActivateTask(&T3);
+		}
+		else if(count == 200)
+		{
+			count = 0;
+			RTOS_TerminalTask(&T2);
+		}
 	}
 }
 
 void Task3()
 {
+	static int count=0;
 	while(1)
 	{
 		T3_Led ^=1;
+		count++;
+		if(count == 100)
+		{
+			RTOS_ActivateTask(&T4);
+		}
+		else if(count == 200)
+		{
+			count = 0;
+			RTOS_TerminalTask(&T3);
+		}
 	}
 }
 
-
+void Task4()
+{
+	static int count=0;
+	while(1)
+	{
+		T4_Led ^=1;
+		count++;
+		if(count == 3)
+		{
+			RTOS_TakeMutex(&Mutex1, &T4);
+		}
+		if(count == 200)
+		{
+			count = 0;
+			RTOS_ReleaseMutex(&Mutex1);
+			RTOS_TerminalTask(&T4);
+		}
+	}
+}
 
 int main(void)
 {
-	RTOS_errorID error;
 	Hardware_init();
 	RTOS_init();
 
-	T1.Stack_Size = 512;
+	Mutex1.PayloadSize = 3;
+	Mutex1.Ppayload = payload;
+
+	T1.Stack_Size = 1024;
 	T1.P_TaskEntery = Task1;
-	T1.Priority = 3;
+	T1.Priority = 4;
 	T1.Task_State = Suspended;
 	strcpy(T1.Task_name,"task1");
 
-	T2.Stack_Size = 512;
+	T2.Stack_Size = 1024;
 	T2.P_TaskEntery = Task2;
 	T2.Priority = 3;
 	T2.Task_State = Suspended;
 	strcpy(T2.Task_name,"task2");
 
-	T3.Stack_Size = 512;
+	T3.Stack_Size = 1024;
 	T3.P_TaskEntery = Task3;
-	T3.Priority = 3;
+	T3.Priority = 2;
 	T3.Task_State = Suspended;
 	strcpy(T3.Task_name,"task3");
 
 
+	T4.Stack_Size = 1024;
+	T4.P_TaskEntery = Task4;
+	T4.Priority = 1;
+	T4.Task_State = Suspended;
+	strcpy(T4.Task_name,"task4");
 
 	RTOS_CreateTask(&T1);
 	RTOS_CreateTask(&T2);
 	RTOS_CreateTask(&T3);
+	RTOS_CreateTask(&T4);
 
 
 	RTOS_ActivateTask(&T1);
-	RTOS_ActivateTask(&T2);
-	RTOS_ActivateTask(&T3);
 
 	RTOS_StartOS();
 
