@@ -1,6 +1,6 @@
 # AO-RTOS
 
-## Real-Time Operating System Features
+## Real-Time Operating System:
 
 ### Create Main Stack
 ![design_MSP](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V1/design_MSP.png)
