@@ -12,11 +12,11 @@
 
 > **Save the Context of the Current Task?**
 > - Automatically saved by the CPU when entering Handler mode:
-> - 	XPSR
-> - 	PC (Next Task Instruction which should be Run)
-> - 	LR (return register which is saved in CPU while Task1 running before Task Switching)
-> - 	r12
-> - 	r4
+	> - XPSR
+	> - PC (Next Task Instruction which should be Run)
+	> - LR (return register which is saved in CPU while Task1 running before Task Switching)
+	> - r12
+	> - r4
 > - 	r3
 > - 	r2
 > - 	r1
