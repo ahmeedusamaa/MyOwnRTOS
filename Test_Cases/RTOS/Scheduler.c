@@ -9,19 +9,12 @@
 #include "MYRTOS_FIFO.h"
 
 
-Task_ref RTOS_IdleTask;
+Task_ref AORTOS_IdleTask;
 FIFO_Buf_t Ready_QUEUE ;
 Task_ref* Ready_QUEUE_FIFO[100] ;
 unsigned char re_evaluatedPriority;
-
 #define NumOfAquiredTasks	50
-typedef struct{
-	Task_ref* AquiredTask;
-	Mutex_ref* AquiredMutex;
-
-}deadlockAvoidance_Struct;
-
-deadlockAvoidance_Struct deadlockAvoidance[NumOfAquiredTasks];
+Task_ref* AquiredTasks[NumOfAquiredTasks];
 
 typedef enum {
 	OSSuspended,
@@ -55,9 +48,9 @@ void Idle_Task()
 	}
 }
 
-RTOS_errorID RTOS_Create_MainStack()
+AORTOS_errorID AORTOS_Create_MainStack()
 {
-	RTOS_errorID error = NOError;
+	AORTOS_errorID error = NOError;
 	// 3 KiloByte for MSP
 	OS_Control._S_MSP = &_estack ;
 	OS_Control._E_MSP = OS_Control._S_MSP - MainStackSize;
@@ -68,9 +61,9 @@ RTOS_errorID RTOS_Create_MainStack()
 
 }
 
-RTOS_errorID RTOS_init()
+AORTOS_errorID AORTOS_init()
 {
-	RTOS_errorID error = NOError;
+	AORTOS_errorID error = NOError;
 
 	/*
 	 * Set OS mode Suspend
@@ -81,7 +74,7 @@ RTOS_errorID RTOS_init()
 	OS_Control.OSModes = OSSuspended;
 
 	//Specify the MAIN stack for OS
-	RTOS_Create_MainStack();
+	AORTOS_Create_MainStack();
 
 	//Create OS ready Queue
 	if (FIFO_init(&Ready_QUEUE, Ready_QUEUE_FIFO, 100) !=FIFO_NO_ERROR)
@@ -90,24 +83,24 @@ RTOS_errorID RTOS_init()
 	}
 
 	//Configure IDLE TASK
-	strcpy(RTOS_IdleTask.Task_name, "idleTask");
-	RTOS_IdleTask.Priority = 255;                	//lowest Priority (unsigned char -> 255)
-	RTOS_IdleTask.P_TaskEntery = Idle_Task;
-	RTOS_IdleTask.Stack_Size = 300;
+	strcpy(AORTOS_IdleTask.Task_name, "idleTask");
+	AORTOS_IdleTask.Priority = 255;                	//lowest Priority (unsigned char -> 255)
+	AORTOS_IdleTask.P_TaskEntery = Idle_Task;
+	AORTOS_IdleTask.Stack_Size = 300;
 
-	error += RTOS_CreateTask(&RTOS_IdleTask);
+	error += AORTOS_CreateTask(&AORTOS_IdleTask);
 
 	return error;
 }
 
-RTOS_errorID RTOS_Create_TaskStack(Task_ref* T_ref)
+AORTOS_errorID AORTOS_Create_TaskStack(Task_ref* T_ref)
 {
-	RTOS_errorID error = NOError;
+	AORTOS_errorID error = NOError;
 
 
 	/*Task Frame
 	 *  add the initial values When creating a task for the first time.
-	 * ======
+	 * ==============================================================
 	 * this context is saved and restored on stack by CPU (when enter/exit interrupt mode):
 	 * XPSR
 	 * PC (Next Task Instruction which should be Run)
@@ -118,7 +111,7 @@ RTOS_errorID RTOS_Create_TaskStack(Task_ref* T_ref)
 	 * r2
 	 * r1
 	 * r0
-	 *====
+	 *==============================================================
 	 *will push and pop manually the addition frame to save the other general purpose registers:
 	 *r5, r6 , r7 ,r8 ,r9, r10,r11 (Saved/Restore)Manual
 	 */
@@ -152,9 +145,9 @@ RTOS_errorID RTOS_Create_TaskStack(Task_ref* T_ref)
 	return error;
 }
 
-RTOS_errorID RTOS_CreateTask(Task_ref* T_ref)
+AORTOS_errorID AORTOS_CreateTask(Task_ref* T_ref)
 {
-	RTOS_errorID error = NOError;
+	AORTOS_errorID error = NOError;
 
 	//create Its own PSP stack
 	//check task stack size exceeded the PSP stack
@@ -179,7 +172,7 @@ RTOS_errorID RTOS_CreateTask(Task_ref* T_ref)
 	OS_Control.PSP_TaskLocator =  (T_ref->_E_PSP_Task - 8);
 
 	//Initialize PSP Task Stack
-	RTOS_Create_TaskStack(T_ref);
+	AORTOS_Create_TaskStack(T_ref);
 
 	//update sch Table
 	OS_Control.OS_Tasks[OS_Control.NumberOfCreatedTask] = T_ref;
@@ -209,7 +202,7 @@ void BubbleSort_SchedulerTable()
 }
 
 //Handler mode
-void RTOS_Update_SchedulerTable()
+void AORTOS_Update_SchedulerTable()
 {
 	BubbleSort_SchedulerTable();
 
@@ -281,7 +274,7 @@ typedef enum{
 }SVC_ID;
 
 
-void Decide_whatNext()
+void AORTOS_Decide_whatNext()
 {
 	/*
 	 * current task is set to the running state and added back to the ready queue
@@ -317,7 +310,7 @@ void Decide_whatNext()
 }
 
 __attribute ((naked)) PendSV_Handler()
-																																																																								{
+																																																														{
 	/*
 	 * Save Context of current task .
 	 * update the current task by the next task to be executed.
@@ -441,7 +434,7 @@ __attribute ((naked)) PendSV_Handler()
 	 * as the compiler will not automatically generate the exit code.
 	 */
 	__asm volatile("BX LR");
-																																																																								}
+																																																														}
 
 //Handler Mode
 void OS_SVC(int *StackFramePointer)
@@ -460,7 +453,7 @@ void OS_SVC(int *StackFramePointer)
 	case AcquireMutex:
 	case ReleaseMutex:
 		//Update Sch table, Ready Queue
-		RTOS_Update_SchedulerTable();
+		AORTOS_Update_SchedulerTable();
 		//OS is in Running State
 		if (OS_Control.OSModes == OSRunning)
 		{
@@ -468,14 +461,14 @@ void OS_SVC(int *StackFramePointer)
 			if(strcmp(OS_Control.Current_Task->Task_name,"idleTask") != 0)
 			{
 				//Decide what next
-				Decide_whatNext();
+				AORTOS_Decide_whatNext();
 				//Context Switching
 				trigger_OS_PendSV();
 			}
 		}
 		break;
 	case TaskWaitingTime:
-		RTOS_Update_SchedulerTable();
+		AORTOS_Update_SchedulerTable();
 		break;
 	}
 }
@@ -503,25 +496,25 @@ int OS_SVC_Set(SVC_ID ID)
 }
 
 
-void RTOS_ActivateTask(Task_ref* T_ref)
+void AORTOS_ActivateTask(Task_ref* T_ref)
 {
 	T_ref->Task_State = Waiting;
 	OS_SVC_Set(ActivateTask);
 }
 
-void RTOS_TerminalTask(Task_ref* T_ref)
+void AORTOS_TerminalTask(Task_ref* T_ref)
 {
 	T_ref->Task_State = Suspended;
 	OS_SVC_Set(TerminateTask);
 }
 
-void RTOS_StartOS()
+void AORTOS_StartOS()
 {
 	OS_Control.OSModes = OSRunning;
 	//set the default task to idle task
-	OS_Control.Current_Task = &RTOS_IdleTask;
+	OS_Control.Current_Task = &AORTOS_IdleTask;
 	//Activate Idle task
-	RTOS_ActivateTask(&RTOS_IdleTask);
+	AORTOS_ActivateTask(&AORTOS_IdleTask);
 
 	//start Systick
 	Start_Systick(); //1ms
@@ -531,18 +524,18 @@ void RTOS_StartOS()
 	OS_SWITCH_SP_to_PSP;
 	SWITCH_CPU_AccessLevel_unprivileged;
 
-	RTOS_IdleTask.P_TaskEntery();
+	AORTOS_IdleTask.P_TaskEntery();
 }
 
-void RTOS_TaskWait(unsigned int ticks, Task_ref* T_ref)
+void AORTOS_TaskWait(unsigned int ticks, Task_ref* T_ref)
 {
 	T_ref->TimeWait.Blocking= Blocking_Enable;
 	T_ref->TimeWait.Ticks_count = ticks;
-	RTOS_TerminalTask(T_ref);
+	AORTOS_TerminalTask(T_ref);
 
 }
 
-void RTOS_Update_TaskWaitingTime()
+void AORTOS_Update_TaskWaitingTime()
 {
 	for(int i=0; i<OS_Control.NumberOfCreatedTask; i++)
 	{
@@ -568,18 +561,15 @@ void RTOS_Update_TaskWaitingTime()
  * When requesting the MUTEX, if the task cannot obtain it, the priority of the task that owns the MUTEX must be re-evaluated.
  */
 
-void RTOS_Acquire_Mutex(Mutex_ref *Acquired_Mutex, Task_ref *T_ref)
+void AORTOS_Acquire_Mutex(Mutex_ref *Acquired_Mutex, Task_ref *T_ref)
 {
 	if(Acquired_Mutex->Current_Task == NULL)
 	{
 		Acquired_Mutex->Current_Task = T_ref;
 		//Add task to array for acquired tasks
-		for(int i=0;i<NumOfAquiredTasks;i++)
-		{
-			if( (deadlockAvoidance[i].AquiredTask== NULL) && (deadlockAvoidance[i].AquiredMutex== NULL) )
-			{
-				deadlockAvoidance[i].AquiredTask = T_ref ;
-				deadlockAvoidance[i].AquiredMutex = Acquired_Mutex;
+		for(int i=0;i<NumOfAquiredTasks;i++){
+			if(AquiredTasks[i]== NULL){
+				AquiredTasks[i] = T_ref ;
 				break;
 			}
 		}
@@ -588,51 +578,45 @@ void RTOS_Acquire_Mutex(Mutex_ref *Acquired_Mutex, Task_ref *T_ref)
 		int i = 0;
 		if(Acquired_Mutex->Next_Task == NULL)
 		{
-			//Deadlock avoidance by Stopping a task from Aqiring more than one Mutex
-			for(i=0;i<NumOfAquiredTasks;i++)
-			{
+			//Deadlock avoidance by Stopping a task from Acqiring more than one Mutex
+			for(i=0;i<NumOfAquiredTasks;i++){
 				//Check if the next task is already Acquiring one or not
-				if(T_ref == deadlockAvoidance[i].AquiredTask)
-				{
-					Mutex_ref* Temp_Mutex;
-					Temp_Mutex = deadlockAvoidance[i].AquiredMutex;
-					RTOS_Release_Mutex(deadlockAvoidance[i].AquiredMutex, T_ref);
+				if(T_ref == AquiredTasks[i]){
+
 					break;
+
 				}
 			}
 			if(i == NumOfAquiredTasks)
 			{
 				Acquired_Mutex->Next_Task = T_ref;
+				T_ref->Task_State = Suspended;
 				if(Acquired_Mutex->PI.PI_State == Priority_Inheritance_Enable)
 				{
-					Acquired_Mutex->PI.SaveRestore_TaskPriority = Acquired_Mutex->Current_Task->Priority;
+					Acquired_Mutex->PI.CurrentTask_Priority = Acquired_Mutex->Current_Task->Priority;
 					Acquired_Mutex->Current_Task->Priority = T_ref->Priority;
 				}
 				//Add task to array for acquired tasks
 				for(int i=0;i<NumOfAquiredTasks;i++){
-					if( (deadlockAvoidance[i].AquiredTask== NULL) && (deadlockAvoidance[i].AquiredMutex== NULL) ){
-						deadlockAvoidance[i].AquiredTask = T_ref ;
-						deadlockAvoidance[i].AquiredMutex = Acquired_Mutex;
+					if(AquiredTasks[i]== NULL){
+						AquiredTasks[i] = T_ref ;
 						break;
 					}
 				}
+				OS_SVC_Set(AcquireMutex);
 			}
-			T_ref->Task_State = Suspended;
-
-			OS_SVC_Set(AcquireMutex);
 		}
 	}
 }
 
-void RTOS_Release_Mutex(Mutex_ref *Release_Mutex, Task_ref *T_ref)
+void AORTOS_Release_Mutex(Mutex_ref *Release_Mutex, Task_ref *T_ref)
 {
 	if(Release_Mutex->Current_Task != NULL)
 	{
 		//Remove task from array for acquired tasks
 		for(int i=0;i<NumOfAquiredTasks;i++){
-			if(deadlockAvoidance[i].AquiredTask == T_ref ){
-				deadlockAvoidance[i].AquiredTask = NULL ;
-				deadlockAvoidance[i].AquiredMutex = NULL;
+			if(AquiredTasks[i] == OS_Control.Current_Task ){
+				AquiredTasks[i]= NULL;
 				break;
 			}
 		}
@@ -640,8 +624,8 @@ void RTOS_Release_Mutex(Mutex_ref *Release_Mutex, Task_ref *T_ref)
 		{
 			if(Release_Mutex->PI.PI_State == Priority_Inheritance_Enable)
 			{
-				T_ref->Priority = Release_Mutex->PI.SaveRestore_TaskPriority;
-				Release_Mutex->PI.SaveRestore_TaskPriority = Release_Mutex->Next_Task->Priority;
+				T_ref->Priority = Release_Mutex->PI.CurrentTask_Priority;
+				Release_Mutex->PI.CurrentTask_Priority = Release_Mutex->Next_Task->Priority;
 			}
 			if(Release_Mutex->Next_Task == NULL)
 			{

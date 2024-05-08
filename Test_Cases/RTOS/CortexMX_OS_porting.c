@@ -35,10 +35,10 @@ void SysTick_Handler()
 {
 	SysTickLed ^= 1;
 
-	RTOS_Update_TaskWaitingTime();
+	AORTOS_Update_TaskWaitingTime();
 
 	//Decide what next
-	Decide_whatNext();
+	AORTOS_Decide_whatNext();
 
 	//trigger OS_PendSV (Switch context/Restore)
 	trigger_OS_PendSV();

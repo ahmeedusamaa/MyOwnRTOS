@@ -50,7 +50,7 @@ typedef enum
 typedef struct
 {
 	Priority_Inheritance_State PI_State;
-	uint8_t SaveRestore_TaskPriority;
+	uint8_t CurrentTask_Priority;
 }Priority_Inheritance;
 
 typedef struct
@@ -66,17 +66,95 @@ typedef enum {
 	Ready_Queue_init_error,
 	Task_exceeded_StackSize,
 	MutexMaxNumberOfUsers
-}RTOS_errorID;
+}AORTOS_errorID;
 
-RTOS_errorID RTOS_init();
-RTOS_errorID RTOS_CreateTask(Task_ref *Task_ref);
-void RTOS_ActivateTask(Task_ref* T_ref);
-void RTOS_TerminalTask(Task_ref* T_ref);
-void Decide_whatNext();
-void RTOS_StartOS();
-void RTOS_TaskWait(unsigned int ticks, Task_ref* T_ref);
-void RTOS_Update_TaskWaitingTime();
-void RTOS_Acquire_Mutex(Mutex_ref *Acquired_Mutex, Task_ref *Task);
-void RTOS_Release_Mutex(Mutex_ref *Release_Mutex, Task_ref *T_ref);
+/**================================================================
+* @Fn				- AORTOS_init
+* @brief		    - Initialize OS (create the Main stack area with user defined size)
+* @param [in] 		- none
+* @retval		    - Return the State of the OS According to initialization operation
+* Note				- none
+*==================================================================*/
+AORTOS_errorID AORTOS_init();
+
+/*================================================================
+* @Fn				- AORTOS_CreateTask
+* @brief		    - Create new task and design its stack
+* @param [in] 		- Struct for Task information
+* @retval		    - Return State
+* Note				- Task in Suspend State until AORTOS_ActivateTask
+*==================================================================*/
+AORTOS_errorID AORTOS_CreateTask(Task_ref *Task_ref);
+
+/*================================================================
+* @Fn				- AORTOS_ActivateTask
+* @brief		    - Activate specified task
+* @param [in] 		- Struct for Task information
+* @retval		    - none
+* Note				- Task was put in Waiting State until AORTOS_Decide_whatNext
+*==================================================================*/
+void AORTOS_ActivateTask(Task_ref* T_ref);
+
+/*================================================================
+* @Fn				- AORTOS_TerminalTask
+* @brief		    - Terminate or suspend a specified task
+* @param [in] 		- Struct for Task information
+* @retval		    - none
+*==================================================================*/
+void AORTOS_TerminalTask(Task_ref* T_ref);
+
+/**================================================================
+* @Fn				- AORTOS_Decide_whatNext
+* @brief		    - round-robin scheduling algorithm
+* @param [in] 		- none
+* @retval		    - none
+*==================================================================*/
+void AORTOS_Decide_whatNext();
+
+/**================================================================
+* @Fn				- AORTOS_StaAORTOS
+* @brief		    - Start Scheduling
+* @param [in] 		- none
+* @retval		    - none
+*==================================================================*/
+void AORTOS_StartOS();
+
+/**================================================================
+* @Fn				- AORTOS_TaskWait
+* @brief		    - Put task in Waiting State For Specific Time
+* @param [in] 		- Ticks
+* @param [in] 		- Struct for Task information
+* @retval		    - none
+* @Note				- Waiting time in ms
+*==================================================================*/
+void AORTOS_TaskWait(unsigned int ticks, Task_ref* T_ref);
+
+/**================================================================
+* @Fn				- AORTOS_Update_TaskWaitingTime
+* @brief		    - Update (decrease) Task Wait Time
+* @param [in] 		- none
+* @retval		    - none
+* @Note				- Waiting time in ms
+*==================================================================*/
+void AORTOS_Update_TaskWaitingTime();
+
+/**================================================================
+* @Fn				- AORTOS_Acquire_Mutex
+* @brief		    - Task acquire Mutex
+* @param [in] 		- Struct for Mutex information
+* @param [in] 		- Struct for Task information
+* @retval		    - none
+* @Note				- Just Two task can Take this Mutex, task cant Acquire more than one Mutex
+*==================================================================*/
+void AORTOS_Acquire_Mutex(Mutex_ref *Acquired_Mutex, Task_ref *Task);
+
+/**================================================================
+* @Fn				- AORTOS_Release_Mutex
+* @brief		    - Task release Mutex
+* @param [in] 		- Struct for Mutex information
+* @param [in] 		- Struct for Task information
+* @retval		    - none
+*==================================================================*/
+void AORTOS_Release_Mutex(Mutex_ref *Release_Mutex, Task_ref *T_ref);
 
 #endif /* INC_SCHEDULER_H_ */
