@@ -1,6 +1,8 @@
 # AO-RTOS
 
-## Real-Time Operating System Was implemented and Tested on Stm32f103 based on Corex-M3 processor. built on the ARM CMSIS V5 Library for easy porting.
+## Real-Time Operating System Was implemented and Tested on Stm32f103 based on Corex-M3 processor, built on the ARM CMSIS V5 Library for easy porting.
+
+## AO-RTOS Overview
 
 ### Create Main Stack
 ![design_MSP](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V1/design_MSP.png)
