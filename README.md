@@ -3,13 +3,13 @@
 **Real-Time Operating System Was implemented and Tested on Stm32f103 based on Corex-M3 processor, built on the ARM CMSIS V5 Library for easy porting.**
 
 **AO-RTOS Overview**
-## Create Main Stack
+#### Create Main Stack
 ![design_MSP](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V1/design_MSP.png)
 
-## Create Task Stack
+#### Create Task Stack
 ![design_PSP](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V1/design_PSP.png)
 
-## Context Switching
+#### Context Switching
 
 > **Save the Context of the Current Task?**
 > - Automatically saved by the CPU when entering Handler mode:
@@ -39,33 +39,33 @@
 > - r0
 > - Automatically restored by the CPU after "BX LR".
 
-## Priority
+#### Priority
 > - Ensures tasks execute based on their priority levels, optimizing system performance.
 
-## Round-Robin
+#### Round-Robin
 > - Supports Round-Robin Scheduling when two or more tasks have the same highest priority.
 
 ![Round-Robin Scheduling](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V2/Round_robin.png)
 
-## Priority Inversion
+#### Priority Inversion
 > - When a low-priority task holds a resource needed by a high-priority task, causing a delay in the execution of the highest-priority task.
 
 ![Priority Inversion](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V4/Priority_inversion.png)
 
-## Solution: Priority Inheritance
+#### Solution: Priority Inheritance
 > - Temporarily raise the priority of a low-priority task holding a shared resource to match the priority of the high-priority task.
 
 ![Priority Inheritance Solution](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V5/priority_Inheritance_Solution.png)
 
-## Mutex Handling
+#### Mutex Handling
 > - Facilitates effective task synchronization through mutex acquisition and release mechanisms.
 
-## Deadlock
+#### Deadlock
 > - Occurs when two or more tasks are mutually waiting for each other to release resources they hold.
 
 ![Deadlock](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V6/Deadlock.png)
 
-## Deadlock Avoidance
+#### Deadlock Avoidance
 > - Stopping a task from acquiring more than one mutex.
 
 ![Deadlock Avoidance Solution](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V6/Deadlock_Solution.png)
