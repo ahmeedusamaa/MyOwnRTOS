@@ -26,8 +26,7 @@
 >
 > **Restore the Context of the next Task?**
 > - Will restore manually frame of general-purpose registers as these will not be automatically restored by the CPU.
->
-> **Update PSP register**
+> - Update PSP register
 > - XPSR
 > - PC (Next Task Instruction which should be Run)
 > - LR (return register which is saved in CPU while Task1 running before Task Switching)
