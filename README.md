@@ -11,32 +11,33 @@
 ### Context Switching
 
 > **Save the Context of the Current Task?**
-> - Automatically saved by the CPU when entering Handler mode.
-> - XPSR
-> - PC (Next Task Instruction which should be Run)
-> - LR (return register which is saved in CPU while Task1 running before Task Switching)
-> - r12
-> - r4
-> - r3
-> - r2
-> - r1
-> - r0
-> - Manually save the additional frame of other general-purpose registers (r5, r6, r7, r8, r9, r10, r11)
+> - Automatically saved by the CPU when entering Handler mode:
+> - 	XPSR
+> - 	PC (Next Task Instruction which should be Run)
+> - 	LR (return register which is saved in CPU while Task1 running before Task Switching)
+> - 	r12
+> - 	r4
+> - 	r3
+> - 	r2
+> - 	r1
+> - 	r0
+> - Manually save the additional frame of other general-purpose registers:
+> -     r5, r6, r7, r8, r9, r10, r11
 >
-> **Restore the Context of the next Task**
+> **Restore the Context of the next Task?**
 > - Will restore manually frame of general-purpose registers as these will not be automatically restored by the CPU.
 >
 > **Update PSP register**
-> - XPSR
-> - PC (Next Task Instruction which should be Run)
-> - LR (return register which is saved in CPU while Task1 running before Task Switching)
-> - r12
-> - r4
-> - r3
-> - r2
-> - r1
-> - r0
-> - Automatically restored by the CPU after "BX LR".
+> - 	XPSR
+> - 	PC (Next Task Instruction which should be Run)
+> - 	LR (return register which is saved in CPU while Task1 running before Task Switching)
+> - 	r12
+> - 	r4
+> - 	r3
+> - 	r2
+> - 	r1
+> - 	r0
+> - 	Automatically restored by the CPU after "BX LR".
 
 ### Priority
 > - Ensures tasks execute based on their priority levels, optimizing system performance.
