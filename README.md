@@ -1,6 +1,6 @@
-# **AO-RTOS**
+# AO-RTOS
 
-## **Real-Time Operating System Features**
+## Real-Time Operating System Features
 
 ### Create Main Stack
 ![Main Stack Design](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V1/design_MSP.png)
@@ -40,14 +40,17 @@
 
 ### Round-Robin
 > - Supports Round-Robin Scheduling when two or more tasks have the same highest priority.
+
 ![Round-Robin Scheduling](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V2/Round_robin.png)
 
 ### Priority Inversion
 > - When a low-priority task holds a resource needed by a high-priority task, causing a delay in the execution of the highest-priority task.
+
 ![Priority Inversion](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V4/Priority_inversion.png)
 
 ### Solution: Priority Inheritance
 > - Temporarily raise the priority of a low-priority task holding a shared resource to match the priority of the high-priority task.
+
 ![Priority Inheritance Solution](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V5/priority_Inheritance_Solution.png)
 
 ### Mutex Handling
@@ -55,10 +58,12 @@
 
 ### Deadlock
 > - Occurs when two or more tasks are mutually waiting for each other to release resources they hold.
+
 ![Deadlock](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V6/Deadlock.png)
 
 ### Deadlock Avoidance
 > - Stopping a task from acquiring more than one mutex.
+
 ![Deadlock Avoidance Solution](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V6/Deadlock_Solution.png)
 
 
