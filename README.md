@@ -1,11 +1,11 @@
-# AO-RTOS
+# <h1 style="font-size: 24px;">AO-RTOS</h1>
 
-## Real-Time Operating System Features
+## <h2 style="font-size: 20px;">Real-Time Operating System Features</h2>
 
-### Create Main Stack
+### <h3 style="font-size: 18px;">Create Main Stack</h3>
 ![Main Stack Design](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V1/design_MSP.png)
 
-### Context Switching
+### <h3 style="font-size: 18px;">Context Switching</h3>
 
 > **Save the Context of the Current Task?**
 > - Automatically saved by the CPU when entering Handler mode.
@@ -35,34 +35,28 @@
 > - r0
 > - Automatically restored by the CPU after "BX LR".
 
-### Priority
-> - Ensures tasks execute based on their priority levels, optimizing system performance.
+### <h3 style="font-size: 18px;">Priority</h3>
+Ensures tasks execute based on their priority levels, optimizing system performance.
 
-### Round-Robin
-> - Supports Round-Robin Scheduling when two or more tasks have the same highest priority.
+### <h3 style="font-size: 18px;">Round-Robin</h3>
+Supports Round-Robin Scheduling when two or more tasks have the same highest priority.
 ![Round-Robin Scheduling](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V2/Round_robin.png)
 
-### Priority Inversion
-> - When a low-priority task holds a resource needed by a high-priority task, causing a delay in the execution of the highest-priority task.
+### <h3 style="font-size: 18px;">Priority Inversion</h3>
+When a low-priority task holds a resource needed by a high-priority task, causing a delay in the execution of the highest-priority task.
 ![Priority Inversion](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V4/Priority_inversion.png)
 
-### Solution: Priority Inheritance
-> - Temporarily raise the priority of a low-priority task holding a shared resource to match the priority of the high-priority task.
+### <h3 style="font-size: 18px;">Solution: Priority Inheritance</h3>
+Temporarily raise the priority of a low-priority task holding a shared resource to match the priority of the high-priority task.
 ![Priority Inheritance Solution](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V5/priority_Inheritance_Solution.png)
 
-### Mutex Handling
-> - Facilitates effective task synchronization through mutex acquisition and release mechanisms.
+### <h3 style="font-size: 18px;">Mutex Handling</h3>
+Facilitates effective task synchronization through mutex acquisition and release mechanisms.
 
-### Deadlock
-> - Occurs when two or more tasks are mutually waiting for each other to release resources they hold.
+### <h3 style="font-size: 18px;">Deadlock</h3>
+Occurs when two or more tasks are mutually waiting for each other to release resources they hold.
 ![Deadlock](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V6/Deadlock.png)
 
-### Deadlock Avoidance
-> - Stopping a task from acquiring more than one mutex.
+### <h3 style="font-size: 18px;">Deadlock Avoidance</h3>
+Stopping a task from acquiring more than one mutex.
 ![Deadlock Avoidance Solution](https://github.com/ahmeedusamaa/MyOwnRTOS/blob/main/V6/Deadlock_Solution.png)
-
-
-
-
-
-
